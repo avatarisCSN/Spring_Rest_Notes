@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Редактирование заметки</title>
+</head>
+<body>
+
+<h2>Редактировать заметку</h2>
+
+<form th:action="@{/note/edit}" method="post">
+    <input type="hidden" th:name="id" th:value="${note.id}">
+
+    <p>Заголовок:<br>
+        <input type="text" th:name="title" th:value="${note.title}">
+    </p>
+
+    <p>Текст:<br>
+        <textarea th:name="content" th:text="${note.content}"></textarea>
+    </p>
+
+    <button type="submit">Сохранить</button>
+</form>
+
+<a href="/note/list">Назад к списку</a>
+
+</body>
+</html>
