@@ -1,26 +1,25 @@
 package com.example.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
 
-@Data
-@Entity
-@Table(name = "notes")
+
 public class Note {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String title;
     private String content;
 
-    public Note() {  // 👈 обязателен для JPA
-    }
-
-    public Note(Long id, String title, String content) {
+    public Note(int id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
     }
 
-    // сеттеры и геттеры можно оставить (или удалить — Lombok @Data их уже создаёт)
+    // Геттеры и сеттеры (нужны для Thymeleaf)
+
+    public int getId() { return id; }
+    public String getTitle() { return title; }
+    public String getContent() { return content; }
+
+    public void setId(int id) {this.id = id;}
+    public void setTitle(String title) { this.title = title; }
+    public void setContent(String content) { this.content = content; }
 }
