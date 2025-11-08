@@ -5,47 +5,36 @@ import com.example.model.Note;
 import com.example.model.NoteNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class NoteServiceImpl implements NoteService {
-    final List<Note> repository = new ArrayList<>();
+    final Map<Integer, Note> notes = new HashMap<>();
 
-    public List<Note> listAll() {
-        return repository;
+    public Collection<Note> getAllNotes() {
+        return notes.values();
     }
-
     public Note add(Note note) {
         int n = (int)(Math.random() * 1000);
-        note.setId(n);
-        repository.add(note);
+        notes.put(n, note);
         return note;
     }
-
     public void deleteById(int id) throws NoteNotFoundException {
-        Note note = repository.stream()
-                .filter(n -> n.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new NoteNotFoundException(id));
-        repository.remove(note);
+        notes.remove(id);
     }
-
-    public void update(Note note) throws NoteNotFoundException {
-        Note noteBuf = repository.stream()
-                .filter(n -> n.getId() == note.getId())
-                .findFirst()
-                .orElseThrow(() -> new NoteNotFoundException(note.getId()));
-        noteBuf.setContent(note.getContent());
-        noteBuf.setTitle(note.getTitle());
+    public void update(int id, String title, String content) throws NoteNotFoundException {
+        Note note = notes.get(id);
+        if (note != null) {
+            note.setTitle(title);
+            note.setContent(content);
+        }
     }
-
     public Note getById(int id) throws NoteNotFoundException {
-        Note noteBuf = repository.stream()
-                .filter(n -> n.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new NoteNotFoundException(id));
-        return noteBuf;
+       return notes.get(id);
+    }
+    public void addTestNotes() {
+        notes.put(1,new Note(1,"Title 1", "Content 1"));
+        notes.put(2,new Note(1,"Title 2", "Content 2"));
     }
 
 }
