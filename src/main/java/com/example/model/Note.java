@@ -1,25 +1,39 @@
 package com.example.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 
-
+@Entity
+@Table(name = "notes")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Note {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
+
+    @Column(nullable = false, length = 100)
     private String title;
+
+    @Column(nullable = false, length = 1000)
     private String content;
 
-    public Note(int id, String title, String content) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-    }
-
-    // Геттеры и сеттеры (нужны для Thymeleaf)
-
-    public int getId() { return id; }
-    public String getTitle() { return title; }
-    public String getContent() { return content; }
-
-    public void setId(int id) {this.id = id;}
-    public void setTitle(String title) { this.title = title; }
-    public void setContent(String content) { this.content = content; }
+    @Column(name = "created_at", nullable = false)
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

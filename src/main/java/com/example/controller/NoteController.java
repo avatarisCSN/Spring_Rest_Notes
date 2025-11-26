@@ -1,57 +1,40 @@
 package com.example.controller;
 
-import com.example.model.Note;
+import com.example.notes.dto.create.CreateNoteRequest;
+import com.example.notes.dto.create.CreateNoteResponse;
+import com.example.notes.dto.delete.DeleteNoteResponse;
+import com.example.notes.dto.get.GetUserNotesResponse;
+import com.example.notes.dto.update.UpdateNoteRequest;
+import com.example.notes.dto.update.UpdateNoteResponse;
 import com.example.service.NoteService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.security.Principal;
 
-@Controller
-@RequestMapping("/note")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/notes")
 public class NoteController {
     private final NoteService noteService;
 
-    // Інжектимо NoteService через конструктор
-    public NoteController(NoteService noteService) {
-        this.noteService = noteService;
+    @PostMapping
+    public CreateNoteResponse create(Principal principal, @RequestBody CreateNoteRequest request) {
+        return noteService.create(principal.getName(), request);
     }
 
-    @GetMapping("/list")
-    public ModelAndView getAllNotes() {
-        ModelAndView result = new ModelAndView("note-list"); // note-list.html в templates/
-        result.addObject("notes", noteService.getAllNotes()); // Передаём коллекцию заметок
-        return result;
+    @GetMapping
+    public GetUserNotesResponse getUserNotes(Principal principal) {
+        return noteService.getUserNotes(principal.getName());
     }
 
-    @PostMapping("/delete")
-    public String deleteNote(@RequestParam int id) {
-        noteService.deleteById(id);
-        return "redirect:/note/list"; // После удаления — редирект
+    @PatchMapping
+    public UpdateNoteResponse update(Principal principal, @RequestBody UpdateNoteRequest request) {
+        return noteService.update(principal.getName(), request);
     }
 
-    @GetMapping("/edit")
-    public ModelAndView editNoteForm(@RequestParam int id) {
-        ModelAndView result = new ModelAndView("note-edit.html"); // note-edit.html.html
-        result.addObject("note", noteService.getById(id));
-        return result;
-    }
-
-    @PostMapping("/edit")
-    public String saveNote(@RequestParam int id,
-                           @RequestParam String title,
-                           @RequestParam String content) {
-         noteService.update(id, title, content);
-        return "redirect:/note/list";
-    }
-    @GetMapping("/inject")
-    public String injectNotes() {
-        noteService.addTestNotes();
-        return "redirect:/note/list"; // После добавления — редирект
+    @DeleteMapping
+    public DeleteNoteResponse delete(Principal principal, @RequestParam(name = "id") long id) {
+        return noteService.delete(principal.getName(), id);
     }
 }
