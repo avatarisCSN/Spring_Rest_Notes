@@ -47,7 +47,8 @@ public class NoteServiceImpl implements NoteService {
     }
 
     public GetUserNotesResponse getUserNotes(String username) {
-        List<Note> userNotes = repository.getUserNotes(username);
+        User user = userService.findByUsername(username);
+        List<Note> userNotes = repository.getUserNotes(user.getId());
 
         return GetUserNotesResponse.success(userNotes);
     }
@@ -107,7 +108,7 @@ public class NoteServiceImpl implements NoteService {
         }
 
         if (Objects.isNull(request.getContent()) || request.getContent().length() > MAX_CONTENT_LENGTH) {
-            return Optional.of(CreateNoteResponse.Error.invalidTitle);
+            return Optional.of(CreateNoteResponse.Error.invalidContent);
         }
 
         return Optional.empty();
@@ -119,7 +120,7 @@ public class NoteServiceImpl implements NoteService {
         }
 
         if (Objects.nonNull(request.getContent()) && request.getContent().length() > MAX_CONTENT_LENGTH) {
-            return Optional.of(UpdateNoteResponse.Error.invalidTitleLength);
+            return Optional.of(UpdateNoteResponse.Error.invalidContentLength);
         }
 
         return Optional.empty();
